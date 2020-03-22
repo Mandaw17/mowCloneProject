@@ -11,8 +11,14 @@ public class Test2 extends JFrame{
     private String keeper;
     private StringTokenizer tAContent;
 	private JMenuBar jmb;
-	private JLabel l_Titre,statusLabel,testingLabel,testingLabel2;
+    private JLabel l_Titre,statusLabel,testingLabel,testingLabel2;
+    private Connection cn;
+    private Statement st = null; 
+    private ResultSet rs = null;
+    private int selectedRows = 0;
+
 	public Test2() {
+        cn = connexion();
 		this.setTitle("ma fenetre"); 
         this.setLayout(new BorderLayout());
         this.setSize(1000, 1000);
@@ -62,14 +68,64 @@ public class Test2 extends JFrame{
          //if (statusLabel.getText().equals("MERCI")) {
             //testingLabel2.setText("SAME " + 			statusLabel.getText()); 
             tAContent = new StringTokenizer(tA.getText());
+            try {
+                st = cn.createStatement();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             while(tAContent.hasMoreTokens()){
+                
                 testingLabel.setText(" IS : "+tAContent.nextToken());
+                String sql = "SELECT * FROM mot where mot LIKE "+tAContent.nextToken()+"%";
+                try {
+                    selectedRows = st.executeUpdate(sql);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                if (selectedRows < 1) {
+                    testingLabel2.setText("A AJOUTER");
+                }
             }
          //}           
       }
    
     }
     
+    public static Connection connexion() {
+		String url = "jdbc:mysql://localhost/mowProject";
+		String login = "root";
+		String passwd = "";
+		Connection cn = null;
+		//ResultSet rs = null;
+		try{
+			Class.forName("com.mysql.jdbc.Driver");
+			cn = DriverManager.getConnection(url, login, passwd);
+		/*	st = cn.createStatement();
+			String sql = "SELECT * FROM mot where mot LIKE "+aRechercher+"%";
+            rs = st.executeQuery(sql);
+          */   
+		/*	while (rs.next()){
+				System.out.println(rs.getString("mots"));
+			}*/
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
+		catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}
+		finally{
+			try{
+				cn.close();
+				//st.close();
+			}
+			catch (SQLException e){
+				e.printStackTrace();
+			}
+        }
+        return cn;
+    }
+
     public static void main(String[] args){
         Test2  awtListenerDemo = new Test2();  
         awtListenerDemo.showTextListenerDemo();

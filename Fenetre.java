@@ -37,12 +37,26 @@ public class Fenetre extends JFrame{
 		
 		p_centre=new JPanel(new GridLayout(1,1)); 
 		tA = new JTextArea(30,30);
+		tA.addTextListener(new CustomTextListener());
+		
+		private void showTextListenerDemo(){
+		 //  okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			    statusLabel.setText("Entered text: " 
+			    + textField.getText());                
+		//	}
+		}
 		//p_sud= new JPanel(); 
 		//this.add(p_nord, BorderLayout.NORTH);
 		p_centre.add(tA);
 		this.add(p_centre,BorderLayout.CENTER);
 		//this.add(p_sud,BorderLayout.SOUTH);
-
+		
+		class CustomTextListener implements TextListener {
+	      	public void textValueChanged(TextEvent e) {
+		 statusLabel.setText("Entered text: " + 			textField.getText());               
+      }
+   }
 	}
 	
 }
